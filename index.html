@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="style.css">
+    <meta property="og:title" content="Tic Tac Toe Game">
+    <meta property="og:description" content="Join my Tic Tac Toe game and challenge me!">
+    <meta property="og:image" content="https://your-game-url.com/preview.jpg">
+    <meta property="og:url" content="https://your-game-url.com">
+</head>
+<body>
+    <div class="container">
+        <h1 id="title">Tic Tac Toe</h1>
+        <div class="theme-toggle">
+            <button id="themeBtn">Toggle Dark Mode</button>
+            <select id="langBtn">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+                <option value="es">Spanish</option>
+            </select>
+            <label for="themeColor">Theme Color:</label>
+            <input type="color" id="themeColor" value="#007bff">
+        </div>
+        <div class="mode-selection">
+            <button id="singlePlayerBtn">Single Player</button>
+            <button id="offlineMultiplayerBtn">Offline Multiplayer</button>
+            <button id="onlineMultiplayerBtn">Online Multiplayer</button>
+        </div>
+        <div id="gameSetup" class="hidden">
+            <div id="singlePlayerSetup" class="hidden">
+                <label for="difficulty">Select Difficulty:</label>
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+                <button id="startSinglePlayer">Start Game</button>
+            </div>
+            <div id="offlineMultiplayerSetup" class="hidden">
+                <label for="player1Name">Player 1 Name (X):</label>
+                <input type="text" id="player1Name" placeholder="Player 1" value="Player 1">
+                <label for="player2Name">Player 2 Name (O):</label>
+                <input type="text" id="player2Name" placeholder="Player 2" value="Player 2">
+                <button id="startOfflineMultiplayer">Start Game</button>
+            </div>
+            <div id="onlineMultiplayerSetup" class="hidden">
+                <button id="createRoomBtn">Create Room</button>
+                <button id="joinRoomBtn">Join Room</button>
+                <div id="roomInput" class="hidden">
+                    <label for="roomCode">Room Code:</label>
+                    <input type="text" id="roomCode" placeholder="e.g., ABC12">
+                    <button id="joinRoom">Join</button>
+                </div>
+                <div id="roomInfo" class="hidden">
+                    <p>Your Room Code: <span id="roomCodeDisplay"></span></p>
+                    <p>Share Link: <a id="roomLink" href="#" aria-label="Share room link"></a></p>
+                    <canvas id="qrCodeCanvas" width="150" height="150"></canvas>
+                    <button id="copyLinkBtn">Copy Link</button>
+                    <button id="shareWhatsAppBtn">Share on WhatsApp</button>
+                    <button id="shareInstagramBtn">Share on Instagram</button>
+                    <button id="shareFacebookBtn">Share on Facebook</button>
+                </div>
+                <div id="lobby" class="hidden">
+                    <h3>Available Rooms</h3>
+                    <ul id="roomList"></ul>
+                </div>
+            </div>
+        </div>
+        <div id="gameBoard" class="hidden">
+            <div id="status" aria-live="polite">Player X's Turn</div>
+            <div class="scores">
+                <span id="scoreX">X: 0</span>
+                <span id="scoreO">O: 0</span>
+            </div>
+            <div class="leaderboard">
+                <h3>Leaderboard</h3>
+                <ul id="leaderboardList"></ul>
+            </div>
+            <div class="board" id="gameBoard3D">
+                <div class="cell" data-index="0" role="button" tabindex="0" aria-label="Cell 1"></div>
+                <div class="cell" data-index="1" role="button" tabindex="0" aria-label="Cell 2"></div>
+                <div class="cell" data-index="2" role="button" tabindex="0" aria-label="Cell 3"></div>
+                <div class="cell" data-index="3" role="button" tabindex="0" aria-label="Cell 4"></div>
+                <div class="cell" data-index="4" role="button" tabindex="0" aria-label="Cell 5"></div>
+                <div class="cell" data-index="5" role="button" tabindex="0" aria-label="Cell 6"></div>
+                <div class="cell" data-index="6" role="button" tabindex="0" aria-label="Cell 7"></div>
+                <div class="cell" data-index="7" role="button" tabindex="0" aria-label="Cell 8"></div>
+                <div class="cell" data-index="8" role="button" tabindex="0" aria-label="Cell 9"></div>
+            </div>
+            <div class="controls">
+                <button id="restartBtn">Restart Game</button>
+                <button id="undoBtn" class="hidden">Undo Move</button>
+                <button id="powerUpBtn" class="hidden">Use Power-Up</button>
+                <label for="volume">Volume:</label>
+                <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
+            </div>
+            <div id="chatWindow" class="hidden">
+                <h3>Chat</h3>
+                <div id="chatMessages"></div>
+                <input type="text" id="chatInput" placeholder="Type a message..." aria-label="Chat input">
+                <button id="sendChat">Send</button>
+                <button id="voiceCallBtn">Start Voice Call</button>
+                <button id="videoCallBtn">Start Video Call</button>
+                <div id="callControls" class="hidden">
+                    <button id="muteBtn">Mute</button>
+                    <button id="toggleCameraBtn">Toggle Camera</button>
+                    <p id="callStatus">Disconnected</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <canvas id="confettiCanvas" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
+    <audio id="moveSound" src="https://freesound.org/data/previews/100/100981_1648170-lq.mp3"></audio>
+    <audio id="winSound" src="https://freesound.org/data/previews/171/171671_2437358-lq.mp3"></audio>
+    <!-- Firebase Compat Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.0/build/qrcode.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

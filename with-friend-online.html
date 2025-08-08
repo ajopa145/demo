@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe with Voice Chat</title>
+    <style>
+        * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #6a5acd;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2.2rem;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+.game-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+}
+
+.game-board {
+    flex: 1;
+    min-width: 100%;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.cell {
+    aspect-ratio: 1;
+    background: #e0e5ec;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+    cursor: pointer;
+    border-radius: 15px;
+    transition: all 0.3s;
+    box-shadow: 5px 5px 15px #b8b9be, -5px -5px 15px #ffffff;
+}
+
+.cell:hover {
+    transform: translateY(-3px);
+    box-shadow: 8px 8px 18px #b8b9be, -8px -8px 18px #ffffff;
+}
+
+.cell.x { 
+    background: #ff6b6b;
+    box-shadow: inset 5px 5px 10px #d45a5a, inset -5px -5px 10px #ff7c7c;
+}
+
+.cell.o { 
+    background: #48dbfb;
+    box-shadow: inset 5px 5px 10px #3ab8d4, inset -5px -5px 10px #56ffff;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(145deg, #6a5acd, #9370db);
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+    box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+    width: 100%;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 8px 8px 15px #d9d9d9, -8px -8px 15px #ffffff;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+.room-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.room-controls button {
+    flex: 1;
+}
+
+.room-controls input {
+    flex: 2;
+}
+
+input {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 50px;
+    background: #e0e5ec;
+    box-shadow: inset 5px 5px 10px #b8b9be, inset -5px -5px 10px #ffffff;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.share-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    box-shadow: inset 2px 2px 5px #d9d9d9, inset -2px -2px 5px #ffffff;
+    width: 100%;
+}
+
+.voice-chat {
+    flex: 1;
+    min-width: 100%;
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    box-shadow: inset 2px 2px 5px #d9d9d9, inset -2px -2px 5px #ffffff;
+}
+
+.voice-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.call-btn {
+    background: linear-gradient(145deg, #1dd1a1, #10ac84);
+    width: 100%;
+}
+
+.end-call-btn {
+    background: linear-gradient(145deg, #ff6b6b, #ee5253);
+    width: 100%;
+}
+
+.audio-container {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.remote-audio {
+    width: 100%;
+    background: #e0e5ec;
+    border-radius: 50px;
+    padding: 10px;
+    box-shadow: inset 5px 5px 10px #b8b9be, inset -5px -5px 10px #ffffff;
+}
+
+.status {
+    margin: 15px 0;
+    font-weight: 600;
+    min-height: 24px;
+    color: #6a5acd;
+    width: 100%;
+}
+
+.share-link {
+    word-break: break-all;
+    margin: 15px 0;
+    padding: 12px;
+    background: #e0e5ec;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    box-shadow: inset 3px 3px 6px #b8b9be, inset -3px -3px 6px #ffffff;
+    width: 100%;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.share-btn {
+    padding: 10px 15px;
+    border-radius: 50px;
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s;
+    box-shadow: 3px 3px 6px #d9d9d9, -3px -3px 6px #ffffff;
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.share-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+}
+
+.whatsapp { 
+    background: linear-gradient(145deg, #25D366, #128C7E);
+}
+
+.telegram { 
+    background: linear-gradient(145deg, #0088cc, #0077b5);
+}
+
+.facebook { 
+    background: linear-gradient(145deg, #3b5998, #2d4373);
+}
+
+.instagram { 
+    background: linear-gradient(145deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+}
+
+.copy-btn { 
+    background: linear-gradient(145deg, #7f8c8d, #6c7a7d);
+}
+
+/* Chat Section */
+.chat-section {
+    flex: 1;
+    min-width: 100%;
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    box-shadow: inset 2px 2px 5px #d9d9d9, inset -2px -2px 5px #ffffff;
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: inset 2px 2px 5px #d9d9d9, inset -2px -2px 5px #ffffff;
+    width: 100%;
+}
+
+.chat-input-container {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 50px;
+    background: #e0e5ec;
+    box-shadow: inset 5px 5px 10px #b8b9be, inset -5px -5px 10px #ffffff;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.send-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(145deg, #6a5acd, #9370db);
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+    box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+    width: auto;
+    min-width: 80px;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 15px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.my-message {
+    background: #6a5acd;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+}
+
+.other-message {
+    background: #e0e5ec;
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+
+.message-sender {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.message-time {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    text-align: right;
+    margin-top: 3px;
+}
+
+/* Winner Popup Styles */
+.winner-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease-out;
+}
+
+.winner-popup.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup-content {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    transform: translateY(30px) scale(0.9);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.winner-popup.show .popup-content {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.popup-content h2 {
+    color: #6a5acd;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    background: linear-gradient(45deg, #6a5acd, #9370db);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.popup-content p {
+    margin-bottom: 25px;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.popup-content button {
+    margin-top: 15px;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    background: linear-gradient(145deg, #6a5acd, #9370db);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+}
+
+.popup-content button:hover {
+    transform: translateY(-3px);
+    box-shadow: 8px 8px 15px #d9d9d9, -8px -8px 15px #ffffff;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #f00;
+    border-radius: 50%;
+    animation: confetti 5s ease-in-out infinite;
+}
+
+@keyframes confetti {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(500px) rotate(720deg); opacity: 0; }
+}
+
+.unicorn {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Incoming Call Popup */
+.call-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease-out;
+}
+
+.call-popup.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.call-popup-content {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 350px;
+    width: 90%;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+.call-popup h2 {
+    color: #6a5acd;
+    margin-bottom: 20px;
+}
+
+.call-popup-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.accept-call-btn {
+    background: linear-gradient(145deg, #1dd1a1, #10ac84);
+}
+
+.decline-call-btn {
+    background: linear-gradient(145deg, #ff6b6b, #ee5253);
+}
+
+.ringtone {
+    display: none;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    .game-board {
+        min-width: auto;
+        flex: 2;
+    }
+    
+    .chat-section, .voice-chat {
+        min-width: auto;
+        flex: 1;
+    }
+    
+    .room-controls input {
+        flex: 3;
+    }
+    
+    .room-controls button {
+        flex: 1;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦄 Tic Tac Toe with Voice Chat</h1>
+        
+        <div class="game-area">
+            <div class="game-board">
+                <div class="room-controls">
+                    <button id="createRoomBtn">Create Room</button>
+                    <input type="text" id="roomCodeInput" placeholder="Enter room code and press Enter">
+                    <button id="joinRoomBtn">Join Room</button>
+                </div>
+                
+                <div class="status" id="statusMessage">Create or join a room to start playing</div>
+                
+                <div class="board" id="gameBoard">
+                    <div class="cell" data-index="0"></div>
+                    <div class="cell" data-index="1"></div>
+                    <div class="cell" data-index="2"></div>
+                    <div class="cell" data-index="3"></div>
+                    <div class="cell" data-index="4"></div>
+                    <div class="cell" data-index="5"></div>
+                    <div class="cell" data-index="6"></div>
+                    <div class="cell" data-index="7"></div>
+                    <div class="cell" data-index="8"></div>
+                </div>
+                
+                <div class="controls">
+                    <button id="resetBtn">Reset Game</button>
+                </div>
+                
+                <div class="share-section" id="shareSection">
+                    <h3>Invite Friends</h3>
+                    <div class="share-link" id="shareLink"></div>
+                    <div class="share-buttons">
+                        <a class="share-btn whatsapp" id="whatsappShare" target="_blank">
+                            WhatsApp
+                        </a>
+                        <a class="share-btn telegram" id="telegramShare" target="_blank">
+                            Telegram
+                        </a>
+                        <a class="share-btn facebook" id="facebookShare" target="_blank">
+                            Facebook
+                        </a>
+                        <a class="share-btn instagram" id="instagramShare" target="_blank">
+                            Instagram
+                        </a>
+                        <button class="share-btn copy-btn" id="copyLinkBtn">
+                            Copy Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-section" id="chatSection">
+                <h2>Chat</h2>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-container">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Type your message...">
+                    <button id="sendBtn" class="send-btn">Send</button>
+                </div>
+            </div>
+            
+            <div class="voice-chat">
+                <h2>Voice Chat</h2>
+                <div class="status" id="callStatus">Call status: Not connected</div>
+                <div class="voice-controls">
+                    <button id="callBtn" class="call-btn">Start Call</button>
+                    <button id="endCallBtn" class="end-call-btn" disabled>End Call</button>
+                </div>
+                <div class="audio-container">
+                    <audio id="remoteAudio" autoplay playsinline class="remote-audio"></audio>
+                </div>
+                <div class="status" id="audioStatus">Microphone: Not accessed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Winner Popup -->
+    <div class="winner-popup" id="winnerPopup">
+        <div class="popup-content">
+            <div class="unicorn">🦄</div>
+            <h2 id="popupTitle">Winner!</h2>
+            <p id="popupMessage">Player X wins the game!</p>
+            <button id="playAgainBtn">Play Again</button>
+        </div>
+    </div>
+
+    <!-- Incoming Call Popup -->
+    <div class="call-popup" id="incomingCallPopup">
+        <div class="call-popup-content">
+            <h2>Incoming Call</h2>
+            <p>You have an incoming voice call</p>
+            <div class="call-popup-buttons">
+                <button id="acceptCallBtn" class="accept-call-btn">Accept</button>
+                <button id="declineCallBtn" class="decline-call-btn">Decline</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ringtone (hidden) -->
+    <audio id="ringtone" class="ringtone" loop>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-classic-alarm-995.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCI9pJucENL75rj-2JZ_baTZwJG1dmyRWY",
+            authDomain: "war-game-a1a7c.firebaseapp.com",
+            databaseURL: "https://war-game-a1a7c-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "war-game-a1a7c",
+            storageBucket: "war-game-a1a7c.appspot.com",
+            messagingSenderId: "695131632305",
+            appId: "1:695131632305:web:7ec853cf84796d1a906890",
+            measurementId: "G-5CBCMWDK1V"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Game variables
+        let roomId = "";
+        let playerSymbol = "";
+        let currentTurn = "";
+        let gameOver = false;
+        let isHost = false;
+        let playerName = `Player${Math.floor(Math.random() * 1000)}`;
+        let isCallActive = false;
+
+        // WebRTC variables
+        let localStream;
+        let remoteStream;
+        let peerConnection;
+        const configuration = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' }
+            ]
+        };
+
+        // DOM elements
+        const cells = document.querySelectorAll('.cell');
+        const createRoomBtn = document.getElementById('createRoomBtn');
+        const joinRoomBtn = document.getElementById('joinRoomBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const roomCodeInput = document.getElementById('roomCodeInput');
+        const statusMessage = document.getElementById('statusMessage');
+        const shareLink = document.getElementById('shareLink');
+        const whatsappShare = document.getElementById('whatsappShare');
+        const telegramShare = document.getElementById('telegramShare');
+        const facebookShare = document.getElementById('facebookShare');
+        const instagramShare = document.getElementById('instagramShare');
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        const callBtn = document.getElementById('callBtn');
+        const endCallBtn = document.getElementById('endCallBtn');
+        const remoteAudio = document.getElementById('remoteAudio');
+        const callStatus = document.getElementById('callStatus');
+        const audioStatus = document.getElementById('audioStatus');
+        const shareSection = document.getElementById('shareSection');
+        const winnerPopup = document.getElementById('winnerPopup');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupMessage = document.getElementById('popupMessage');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        const incomingCallPopup = document.getElementById('incomingCallPopup');
+        const acceptCallBtn = document.getElementById('acceptCallBtn');
+        const declineCallBtn = document.getElementById('declineCallBtn');
+        const ringtone = document.getElementById('ringtone');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatSection = document.getElementById('chatSection');
+
+        // Initialize game
+        function initGame() {
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('x', 'o');
+                cell.addEventListener('click', handleCellClick);
+            });
+            gameOver = false;
+        }
+
+        // Create a new room
+        function createRoom() {
+            roomId = generateRoomId();
+            isHost = true;
+            playerSymbol = 'x';
+            
+            // Set initial game state in Firebase
+            const gameState = {
+                board: ['', '', '', '', '', '', '', '', ''],
+                currentTurn: 'x',
+                gameOver: false,
+                players: 1,
+                messages: {}
+            };
+            
+            database.ref('rooms/' + roomId).set(gameState)
+                .then(() => {
+                    statusMessage.textContent = `Room created! You're X`;
+                    initGame();
+                    setupGameListeners();
+                    showShareLink();
+                    setupWebRTC();
+                    setupChat();
+                    shareSection.style.display = 'block';
+                    chatSection.style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error("Error creating room:", error);
+                    statusMessage.textContent = "Error creating room. Please try again.";
+                });
+        }
+
+        // Join an existing room
+        function joinRoom() {
+            roomId = roomCodeInput.value.trim();
+            if (!roomId) {
+                statusMessage.textContent = "Please enter a room code";
+                return;
+            }
+            
+            isHost = false;
+            playerSymbol = 'o';
+            
+            // Check if room exists
+            database.ref('rooms/' + roomId).once('value')
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        const roomData = snapshot.val();
+                        if (roomData.players >= 2) {
+                            statusMessage.textContent = "Room is full!";
+                            return;
+                        }
+                        
+                        // Join the room
+                        database.ref('rooms/' + roomId).update({
+                            players: 2
+                        });
+                        
+                        statusMessage.textContent = `Joined room! You're O`;
+                        initGame();
+                        setupGameListeners();
+                        setupWebRTC();
+                        setupChat();
+                        shareSection.style.display = 'block';
+                        chatSection.style.display = 'flex';
+                    } else {
+                        statusMessage.textContent = "Room not found!";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error joining room:", error);
+                    statusMessage.textContent = "Error joining room. Please try again.";
+                });
+        }
+
+        // Generate a random room ID
+        function generateRoomId() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        // Set up Firebase listeners for the room
+        function setupGameListeners() {
+            database.ref('rooms/' + roomId).on('value', snapshot => {
+                const roomData = snapshot.val();
+                if (!roomData) return;
+                
+                // Update board
+                roomData.board.forEach((cell, index) => {
+                    cells[index].textContent = cell.toUpperCase();
+                    cells[index].className = 'cell';
+                    if (cell) cells[index].classList.add(cell);
+                });
+                
+                // Update turn
+                currentTurn = roomData.currentTurn;
+                if (!roomData.gameOver) {
+                    statusMessage.textContent = playerSymbol === 'x' ? 
+                        `Your turn (X)` : `Your turn (O)`;
+                }
+                
+                // Check game over
+                if (roomData.gameOver) {
+                    gameOver = true;
+                    if (roomData.gameOver === 'draw') {
+                        showWinnerPopup("It's a Draw!", "🦄 No winner this time!");
+                    } else {
+                        showWinnerPopup("Winner!", `Player ${roomData.gameOver.toUpperCase()} wins! 🎉`);
+                    }
+                }
+            });
+        }
+
+        // Set up chat functionality
+        function setupChat() {
+            // Load existing messages
+            database.ref(`rooms/${roomId}/messages`).on('child_added', snapshot => {
+                const message = snapshot.val();
+                addMessageToChat(message.sender, message.text, message.timestamp, message.isMe);
+            });
+
+            // Send message
+            sendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+
+        // Send a chat message
+        function sendMessage() {
+            const messageText = chatInput.value.trim();
+            if (!messageText) return;
+
+            const timestamp = new Date().getTime();
+            const message = {
+                sender: playerName,
+                text: messageText,
+                timestamp: timestamp,
+                isMe: true
+            };
+
+            // Add to Firebase
+            database.ref(`rooms/${roomId}/messages`).push(message)
+                .then(() => {
+                    chatInput.value = '';
+                })
+                .catch(error => {
+                    console.error("Error sending message:", error);
+                });
+        }
+
+        // Add message to chat UI
+        function addMessageToChat(sender, text, timestamp, isMe) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isMe ? 'my-message' : 'other-message'}`;
+            
+            const senderDiv = document.createElement('div');
+            senderDiv.className = 'message-sender';
+            senderDiv.textContent = sender;
+            
+            const textDiv = document.createElement('div');
+            textDiv.textContent = text;
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = formatTime(timestamp);
+            
+            messageDiv.appendChild(senderDiv);
+            messageDiv.appendChild(textDiv);
+            messageDiv.appendChild(timeDiv);
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Format timestamp
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Show winner popup with animation
+        function showWinnerPopup(title, message) {
+            popupTitle.textContent = title;
+            popupMessage.textContent = message;
+            winnerPopup.classList.add('show');
+            
+            // Add confetti effect
+            for (let i = 0; i < 50; i++) {
+                createConfetti();
+            }
+        }
+
+        // Create confetti elements
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = getRandomColor();
+            confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            confetti.style.width = (Math.random() * 10 + 5) + 'px';
+            confetti.style.height = confetti.style.width;
+            document.body.appendChild(confetti);
+            
+            // Remove confetti after animation
+            setTimeout(() => {
+                confetti.remove();
+            }, 5000);
+        }
+
+        // Get random color for confetti
+        function getRandomColor() {
+            const colors = ['#ff6b6b', '#48dbfb', '#1dd1a1', '#feca57', '#5f27cd', '#ff9ff3'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Handle cell clicks
+        function handleCellClick(e) {
+            if (gameOver || currentTurn !== playerSymbol) return;
+            
+            const cellIndex = e.target.getAttribute('data-index');
+            const roomRef = database.ref('rooms/' + roomId);
+            
+            roomRef.once('value')
+                .then(snapshot => {
+                    const roomData = snapshot.val();
+                    if (roomData.board[cellIndex] !== '') return;
+                    
+                    // Update board
+                    const newBoard = [...roomData.board];
+                    newBoard[cellIndex] = playerSymbol;
+                    
+                    // Check for winner
+                    const winner = checkWinner(newBoard);
+                    const isDraw = !winner && !newBoard.includes('');
+                    
+                    // Update game state
+                    const updates = {
+                        board: newBoard,
+                        currentTurn: playerSymbol === 'x' ? 'o' : 'x',
+                        gameOver: winner || isDraw ? (winner || 'draw') : false
+                    };
+                    
+                    return roomRef.update(updates);
+                })
+                .catch(error => {
+                    console.error("Error making move:", error);
+                });
+        }
+
+        // Check for winner
+        function checkWinner(board) {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                [0, 4, 8], [2, 4, 6]             // diagonals
+            ];
+            
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return board[a];
+                }
+            }
+            return null;
+        }
+
+        // Reset the game
+        function resetGame() {
+            if (!roomId) return;
+            
+            database.ref('rooms/' + roomId).update({
+                board: ['', '', '', '', '', '', '', '', ''],
+                currentTurn: 'x',
+                gameOver: false
+            });
+            
+            gameOver = false;
+            statusMessage.textContent = playerSymbol === 'x' ? 
+                `Game reset! You're X` : `Game reset! You're O`;
+                
+            // Hide winner popup
+            winnerPopup.classList.remove('show');
+        }
+
+        // Show shareable link
+        function showShareLink() {
+            const gameLink = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
+            shareLink.textContent = gameLink;
+            
+            // Set up share buttons
+            whatsappShare.href = `https://wa.me/?text=Let's play Tic Tac Toe! Join me at: ${gameLink}`;
+            telegramShare.href = `https://t.me/share/url?url=${encodeURIComponent(gameLink)}&text=Let's play Tic Tac Toe!`;
+            facebookShare.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(gameLink)}`;
+            instagramShare.href = `https://www.instagram.com/?url=${encodeURIComponent(gameLink)}`;
+            
+            copyLinkBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(gameLink)
+                    .then(() => {
+                        copyLinkBtn.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyLinkBtn.textContent = 'Copy Link';
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+            });
+        }
+
+        // WebRTC Setup
+        function setupWebRTC() {
+            callBtn.addEventListener('click', () => startCall(true));
+            endCallBtn.addEventListener('click', endCall);
+            
+            // Listen for incoming calls (only for guest)
+            if (!isHost) {
+                database.ref(`rooms/${roomId}/offer`).on('value', async snapshot => {
+                    const offer = snapshot.val();
+                    if (offer && !isCallActive) {
+                        showIncomingCall();
+                    }
+                });
+            }
+            
+            acceptCallBtn.addEventListener('click', acceptCall);
+            declineCallBtn.addEventListener('click', declineCall);
+        }
+
+        // Show incoming call notification
+        function showIncomingCall() {
+            incomingCallPopup.classList.add('show');
+            ringtone.play().catch(e => console.log("Couldn't play ringtone:", e));
+        }
+
+        // Hide incoming call notification
+        function hideIncomingCall() {
+            incomingCallPopup.classList.remove('show');
+            ringtone.pause();
+            ringtone.currentTime = 0;
+        }
+
+        // Accept incoming call
+        async function acceptCall() {
+            hideIncomingCall();
+            await startCall(false);
+        }
+
+        // Decline incoming call
+        function declineCall() {
+            hideIncomingCall();
+            database.ref(`rooms/${roomId}/offer`).off();
+        }
+
+        async function startCall(initiate = true) {
+            isCallActive = true;
+            callStatus.textContent = "Call status: Starting call...";
+            callBtn.disabled = true;
+            audioStatus.textContent = "Microphone: Accessing...";
+            
+            try {
+                // Get local audio stream
+                localStream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    }
+                });
+                audioStatus.textContent = "Microphone: Enabled";
+                
+                // Create peer connection
+                peerConnection = new RTCPeerConnection(configuration);
+                
+                // Add local stream to connection
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+                
+                // Set up remote stream
+                remoteStream = new MediaStream();
+                remoteAudio.srcObject = remoteStream;
+                remoteAudio.volume = 1.0; // Ensure volume is up
+                
+                // Play remote audio when it becomes available
+                remoteAudio.oncanplay = () => {
+                    remoteAudio.play().catch(e => {
+                        console.log("Auto-play prevented, showing play button");
+                        remoteAudio.controls = true;
+                    });
+                };
+                
+                // Listen for remote tracks
+                peerConnection.ontrack = event => {
+                    event.streams[0].getTracks().forEach(track => {
+                        remoteStream.addTrack(track);
+                    });
+                    callStatus.textContent = "Call status: Connected";
+                    endCallBtn.disabled = false;
+                    
+                    // Try to play audio immediately
+                    remoteAudio.play().catch(e => {
+                        console.log("Auto-play prevented, showing play button");
+                        remoteAudio.controls = true;
+                    });
+                };
+                
+                // ICE candidate handling
+                peerConnection.onicecandidate = event => {
+                    if (event.candidate) {
+                        database.ref(`rooms/${roomId}/candidates/${isHost ? 'host' : 'guest'}`).push({
+                            candidate: event.candidate,
+                            from: isHost ? 'host' : 'guest'
+                        });
+                    }
+                };
+                
+                peerConnection.oniceconnectionstatechange = () => {
+                    if (peerConnection.iceConnectionState === 'disconnected') {
+                        callStatus.textContent = "Call status: Disconnected";
+                        endCallBtn.disabled = true;
+                        callBtn.disabled = false;
+                        isCallActive = false;
+                    }
+                };
+                
+                // Create offer/answer based on role
+                if (isHost && initiate) {
+                    const offer = await peerConnection.createOffer();
+                    await peerConnection.setLocalDescription(offer);
+                    
+                    database.ref(`rooms/${roomId}/offer`).set({
+                        type: offer.type,
+                        sdp: offer.sdp
+                    });
+                    
+                    // Listen for answer
+                    database.ref(`rooms/${roomId}/answer`).on('value', async snapshot => {
+                        const answer = snapshot.val();
+                        if (answer) {
+                            await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+                        }
+                    });
+                } else if (!isHost) {
+                    // Listen for offer
+                    const offerSnapshot = await database.ref(`rooms/${roomId}/offer`).once('value');
+                    const offer = offerSnapshot.val();
+                    
+                    if (offer) {
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+                        
+                        const answer = await peerConnection.createAnswer();
+                        await peerConnection.setLocalDescription(answer);
+                        
+                        database.ref(`rooms/${roomId}/answer`).set({
+                            type: answer.type,
+                            sdp: answer.sdp
+                        });
+                    }
+                }
+                
+                // Listen for ICE candidates
+                database.ref(`rooms/${roomId}/candidates/${isHost ? 'guest' : 'host'}`).on('child_added', async snapshot => {
+                    const candidateData = snapshot.val();
+                    if (candidateData) {
+                        try {
+                            await peerConnection.addIceCandidate(new RTCIceCandidate(candidateData.candidate));
+                        } catch (e) {
+                            console.error("Error adding ICE candidate:", e);
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error("Error starting call:", error);
+                callStatus.textContent = "Call status: Error starting call";
+                audioStatus.textContent = "Microphone: Access denied";
+                callBtn.disabled = false;
+                isCallActive = false;
+                
+                if (error.name === 'NotAllowedError') {
+                    alert("Please allow microphone access to use voice chat");
+                }
+            }
+        }
+
+        function endCall() {
+            isCallActive = false;
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            
+            if (remoteStream) {
+                remoteStream.getTracks().forEach(track => track.stop());
+                remoteStream = null;
+                remoteAudio.srcObject = null;
+                remoteAudio.controls = false;
+            }
+            
+            // Clean up Firebase listeners
+            database.ref(`rooms/${roomId}/offer`).off();
+            database.ref(`rooms/${roomId}/answer`).off();
+            database.ref(`rooms/${roomId}/candidates/host`).off();
+            database.ref(`rooms/${roomId}/candidates/guest`).off();
+            
+            // Clean up Firebase data
+            database.ref(`rooms/${roomId}/offer`).remove();
+            database.ref(`rooms/${roomId}/answer`).remove();
+            database.ref(`rooms/${roomId}/candidates`).remove();
+            
+            callStatus.textContent = "Call status: Not connected";
+            audioStatus.textContent = "Microphone: Not accessed";
+            callBtn.disabled = false;
+            endCallBtn.disabled = true;
+        }
+
+        // Check URL for room parameter
+        function checkUrlForRoom() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomParam = urlParams.get('room');
+            
+            if (roomParam) {
+                roomCodeInput.value = roomParam;
+                joinRoom();
+            }
+        }
+
+        // Event listeners
+        createRoomBtn.addEventListener('click', createRoom);
+        joinRoomBtn.addEventListener('click', joinRoom);
+        roomCodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                joinRoom();
+            }
+        });
+        resetBtn.addEventListener('click', resetGame);
+        playAgainBtn.addEventListener('click', resetGame);
+
+        // Initialize
+        checkUrlForRoom();
+        initGame();
+        chatSection.style.display = 'none';
+        shareSection.style.display = 'none';
+    </script>
+</body>
+</html>
