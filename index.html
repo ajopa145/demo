@@ -1,124 +1,200 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+
+<html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
-    <link rel="stylesheet" href="style.css">
-    <meta property="og:title" content="Tic Tac Toe Game">
-    <meta property="og:description" content="Join my Tic Tac Toe game and challenge me!">
-    <meta property="og:image" content="https://your-game-url.com/preview.jpg">
-    <meta property="og:url" content="https://your-game-url.com">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PlayHub — Simple Static Game Platform</title>
+  <style>
+    /* Simple responsive styling */
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#6ee7b7;--muted:#94a3b8}
+    *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system,Segoe UI, Roboto, "Helvetica Neue", Arial}
+    body{margin:0;background:linear-gradient(180deg,#071029 0%, #071827 100%);color:#e6eef8;min-height:100vh}
+    header{padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .branding{display:flex;align-items:center;gap:14px}
+    .logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#0ea5a9,#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .title{font-size:18px;margin:0}
+    .subtitle{font-size:12px;color:var(--muted);margin:0}
+    nav a{color:var(--muted);text-decoration:none;margin-left:14px;font-size:14px}main{padding:18px 28px}
+.hero{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between}
+.hero-left{max-width:640px}
+h1{margin:0 0 10px 0;font-size:28px}
+p.lead{margin:0 0 18px 0;color:var(--muted)}
+.btn{display:inline-block;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#06b6d4,#7c3aed);color:#051024;font-weight:600;text-decoration:none}
+
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:20px}
+.card{background:rgba(255,255,255,0.03);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.card h3{margin:0 0 8px 0}
+.card p{margin:0 0 12px 0;color:var(--muted);font-size:13px}
+.actions{display:flex;gap:8px}
+.smallbtn{padding:8px 10px;border-radius:8px;border:0;background:rgba(255,255,255,0.06);color:var(--muted);cursor:pointer}
+
+footer{padding:20px 28px;color:var(--muted);font-size:13px}
+
+/* modal */
+.modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6)}
+.modal{background:linear-gradient(180deg,#071727,#051223);padding:18px;border-radius:12px;width:min(760px,94%);max-height:86vh;overflow:auto;border:1px solid rgba(255,255,255,0.04)}
+
+/* simple click-the-dot game styles */
+.play-area{height:320px;border-radius:10px;background:linear-gradient(180deg,#061021,#03101b);display:flex;align-items:center;justify-content:center;position:relative}
+.dot{width:34px;height:34px;border-radius:50%;position:absolute;display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer}
+
+@media(max-width:640px){h1{font-size:22px}.logo{width:44px;height:44px}.hero{flex-direction:column;align-items:flex-start}}
+
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1 id="title">Tic Tac Toe</h1>
-        <div class="theme-toggle">
-            <button id="themeBtn">Toggle Dark Mode</button>
-            <select id="langBtn">
-                <option value="en">English</option>
-                <option value="hi">Hindi</option>
-                <option value="es">Spanish</option>
-            </select>
-            <label for="themeColor">Theme Color:</label>
-            <input type="color" id="themeColor" value="#007bff">
-        </div>
-        <div class="mode-selection">
-            <button id="singlePlayerBtn">Single Player</button>
-            <button id="offlineMultiplayerBtn">Offline Multiplayer</button>
-            <button id="onlineMultiplayerBtn">Online Multiplayer</button>
-        </div>
-        <div id="gameSetup" class="hidden">
-            <div id="singlePlayerSetup" class="hidden">
-                <label for="difficulty">Select Difficulty:</label>
-                <select id="difficulty">
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                </select>
-                <button id="startSinglePlayer">Start Game</button>
-            </div>
-            <div id="offlineMultiplayerSetup" class="hidden">
-                <label for="player1Name">Player 1 Name (X):</label>
-                <input type="text" id="player1Name" placeholder="Player 1" value="Player 1">
-                <label for="player2Name">Player 2 Name (O):</label>
-                <input type="text" id="player2Name" placeholder="Player 2" value="Player 2">
-                <button id="startOfflineMultiplayer">Start Game</button>
-            </div>
-            <div id="onlineMultiplayerSetup" class="hidden">
-                <button id="createRoomBtn">Create Room</button>
-                <button id="joinRoomBtn">Join Room</button>
-                <div id="roomInput" class="hidden">
-                    <label for="roomCode">Room Code:</label>
-                    <input type="text" id="roomCode" placeholder="e.g., ABC12">
-                    <button id="joinRoom">Join</button>
-                </div>
-                <div id="roomInfo" class="hidden">
-                    <p>Your Room Code: <span id="roomCodeDisplay"></span></p>
-                    <p>Share Link: <a id="roomLink" href="#" aria-label="Share room link"></a></p>
-                    <canvas id="qrCodeCanvas" width="150" height="150"></canvas>
-                    <button id="copyLinkBtn">Copy Link</button>
-                    <button id="shareWhatsAppBtn">Share on WhatsApp</button>
-                    <button id="shareInstagramBtn">Share on Instagram</button>
-                    <button id="shareFacebookBtn">Share on Facebook</button>
-                </div>
-                <div id="lobby" class="hidden">
-                    <h3>Available Rooms</h3>
-                    <ul id="roomList"></ul>
-                </div>
-            </div>
-        </div>
-        <div id="gameBoard" class="hidden">
-            <div id="status" aria-live="polite">Player X's Turn</div>
-            <div class="scores">
-                <span id="scoreX">X: 0</span>
-                <span id="scoreO">O: 0</span>
-            </div>
-            <div class="leaderboard">
-                <h3>Leaderboard</h3>
-                <ul id="leaderboardList"></ul>
-            </div>
-            <div class="board" id="gameBoard3D">
-                <div class="cell" data-index="0" role="button" tabindex="0" aria-label="Cell 1"></div>
-                <div class="cell" data-index="1" role="button" tabindex="0" aria-label="Cell 2"></div>
-                <div class="cell" data-index="2" role="button" tabindex="0" aria-label="Cell 3"></div>
-                <div class="cell" data-index="3" role="button" tabindex="0" aria-label="Cell 4"></div>
-                <div class="cell" data-index="4" role="button" tabindex="0" aria-label="Cell 5"></div>
-                <div class="cell" data-index="5" role="button" tabindex="0" aria-label="Cell 6"></div>
-                <div class="cell" data-index="6" role="button" tabindex="0" aria-label="Cell 7"></div>
-                <div class="cell" data-index="7" role="button" tabindex="0" aria-label="Cell 8"></div>
-                <div class="cell" data-index="8" role="button" tabindex="0" aria-label="Cell 9"></div>
-            </div>
-            <div class="controls">
-                <button id="restartBtn">Restart Game</button>
-                <button id="undoBtn" class="hidden">Undo Move</button>
-                <button id="powerUpBtn" class="hidden">Use Power-Up</button>
-                <label for="volume">Volume:</label>
-                <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
-            </div>
-            <div id="chatWindow" class="hidden">
-                <h3>Chat</h3>
-                <div id="chatMessages"></div>
-                <input type="text" id="chatInput" placeholder="Type a message..." aria-label="Chat input">
-                <button id="sendChat">Send</button>
-                <button id="voiceCallBtn">Start Voice Call</button>
-                <button id="videoCallBtn">Start Video Call</button>
-                <div id="callControls" class="hidden">
-                    <button id="muteBtn">Mute</button>
-                    <button id="toggleCameraBtn">Toggle Camera</button>
-                    <p id="callStatus">Disconnected</p>
-                </div>
-            </div>
-        </div>
+  <header>
+    <div class="branding">
+      <div class="logo">PH</div>
+      <div>
+        <p class="title">PlayHub</p>
+        <p class="subtitle">Ek simple static game platform — Khelo aur maza lo</p>
+      </div>
     </div>
-    <canvas id="confettiCanvas" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
-    <audio id="moveSound" src="https://freesound.org/data/previews/100/100981_1648170-lq.mp3"></audio>
-    <audio id="winSound" src="https://freesound.org/data/previews/171/171671_2437358-lq.mp3"></audio>
-    <!-- Firebase Compat Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.0/build/qrcode.min.js"></script>
-    <script src="script.js"></script>
-</body>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#games">Games</a>
+      <a href="#about">About</a>
+    </nav>
+  </header>  <main>
+    <section class="hero">
+      <div class="hero-left">
+        <h1>Simple games — Fast fun</h1>
+        <p class="lead">Chhoto, halka-phulka aur offline-friendly games. Seedha browser me khelo — koi install nahi.</p>
+        <a class="btn" id="play-demo">Play demo game</a>
+      </div>
+      <div style="flex:1;min-width:260px">
+        <div class="card">
+          <h3>About</h3>
+          <p>Ye ek static template hai jisme aap apne chhote HTML/JS games rakh sakte ho. Mobile friendly aur simple.</p>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="smallbtn" onclick="downloadHTML()">Download</button>
+            <button class="smallbtn" onclick="shareLink()">Share</button>
+          </div>
+        </div>
+      </div>
+    </section><section id="games">
+  <h2 style="margin-top:22px">Games</h2>
+  <div class="games">
+    <div class="card">
+      <h3>Click the Dot</h3>
+      <p>Ek chhota sa reflex game — jitna jaldi click karoge, utna score accha.</p>
+      <div class="actions">
+        <button class="smallbtn" onclick="openModal('clickerdot')">Play</button>
+        <button class="smallbtn" onclick="openModal('how-clicker')">How to</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Coming Soon</h3>
+      <p>Tic-Tac-Toe aur Memory game jaldi aa rahe hain. Template me naya game jodna aasan hai.</p>
+      <div class="actions">
+        <button class="smallbtn" disabled>Play</button>
+        <button class="smallbtn" onclick="openModal('add-game')">Add Game</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </main>  <div class="modal-backdrop" id="modal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div id="modal-content"></div>
+      <div style="text-align:right;margin-top:12px">
+        <button class="smallbtn" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>  <footer>
+    Made with ❤️ — PlayHub. Template by Ajopa.
+  </footer>  <script>
+    // Utility functions
+    function openModal(id){
+      const modal = document.getElementById('modal');
+      const content = document.getElementById('modal-content');
+      content.innerHTML = '';
+      if(id === 'clickerdot'){
+        content.innerHTML = `
+          <h2>Click the Dot</h2>
+          <p style="color:var(--muted)">Click the moving dot as many times as you can in 20 seconds.</p>
+          <div class="play-area" id="play-area">
+            <div id="dot" class="dot" style="background:linear-gradient(90deg,#06b6d4,#7c3aed);">GO</div>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:10px;align-items:center">
+            <button class="smallbtn" id="start-btn">Start</button>
+            <div id="score" style="color:var(--muted)">Score: 0</div>
+            <div id="timer" style="color:var(--muted)">Time: 20</div>
+          </div>
+        `;
+        modal.style.display = 'flex';
+        setupClicker();
+      } else if(id === 'how-clicker'){
+        content.innerHTML = `<h3>How to play</h3><p style="color:var(--muted)">Click the green/purple dot when it appears. Try to get high score in 20 seconds. Use mobile or desktop.</p>`;
+        modal.style.display = 'flex';
+      } else if(id === 'add-game'){
+        content.innerHTML = `<h3>Add a game</h3><p style="color:var(--muted)">To add a game: copy a new card in the <code>&lt;section id=\"games\"&gt;</code> area and add a modal handler in the JS.</p>`;
+        modal.style.display = 'flex';
+      }
+    }
+    function closeModal(){document.getElementById('modal').style.display='none';
+      const pa = document.getElementById('play-area'); if(pa){pa.innerHTML='';}
+    }
+
+    // Simple click-the-dot game logic
+    function setupClicker(){
+      const startBtn = document.getElementById('start-btn');
+      const dot = document.getElementById('dot');
+      const area = document.getElementById('play-area');
+      const scoreEl = document.getElementById('score');
+      const timerEl = document.getElementById('timer');
+      let score = 0, timeLeft = 20, timerId = null;
+
+      function placeDot(){
+        const w = area.clientWidth - 40;
+        const h = area.clientHeight - 40;
+        const x = Math.max(0, Math.floor(Math.random()*w));
+        const y = Math.max(0, Math.floor(Math.random()*h));
+        dot.style.left = x + 'px';
+        dot.style.top = y + 'px';
+      }
+
+      function tick(){
+        timeLeft -= 1;
+        timerEl.textContent = 'Time: ' + timeLeft;
+        if(timeLeft <= 0){
+          clearInterval(timerId);
+          startBtn.disabled = false;
+          dot.style.display = 'none';
+          alert('Time up! Score: ' + score);
+        }
+      }
+
+      dot.onclick = function(e){
+        score += 1;
+        scoreEl.textContent = 'Score: ' + score;
+        placeDot();
+      }
+
+      startBtn.onclick = function(){
+        score = 0; timeLeft = 20; scoreEl.textContent = 'Score: 0'; timerEl.textContent = 'Time: 20';
+        dot.style.display = 'block'; placeDot();
+        startBtn.disabled = true;
+        timerId = setInterval(tick,1000);
+      }
+
+    }
+
+    // Button handlers
+    document.getElementById('play-demo').addEventListener('click',()=>openModal('clickerdot'));
+    function downloadHTML(){
+      const html = document.documentElement.outerHTML;
+      const blob = new Blob([html],{type:'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'playhub-template.html'; a.click();
+      URL.revokeObjectURL(url);
+    }
+    function shareLink(){
+      if(navigator.share){navigator.share({title:document.title,text:'Check this simple game site',url:location.href}).catch(()=>alert('Share cancelled'))}
+      else{prompt('Copy this HTML file:','playhub-template.html')}
+    }
+  </script></body>
 </html>
